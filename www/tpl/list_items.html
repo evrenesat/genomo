@@ -1,0 +1,14 @@
+<admissions class="app-page">
+    <header class="header-bar">
+        <h1 class="title">{{=it.title}}</h1>
+    </header>
+    <div class="content">
+
+        <ul class="list">
+            <li class="divider">İşlem yapmak istediğiniz kaydı seçiniz</li>
+            {{~it.items :li}}
+            <li><a class="padded-list" href="#!{{~it.action}}/{{=li.id}}">{{=li.name}}</a></li>
+            {{~}}
+        </ul>
+    </div>
+</admissions>

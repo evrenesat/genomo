@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"/>
+
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/phonon.css"/>
+    <script src="js/doT.min.js" type="text/javascript"></script>
+    <script src="js/phonon.js" type="text/javascript"></script>
+    <title>Gentan Mobil Terminal 1.0</title>
+</head>
+
+<!--<script type="text/javascript" src="cordova.js"></script>-->
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="cordova.js" onload="window._cordova_loaded=1"></script>
+<script>
+    function load_from() {
+        if (window._loaded) {
+            window._url = $('#cjs').attr('src').split('/static/client')[0]
+
+        } else {
+            window._url = "http://" + prompt("Sunucu adresini giriniz;\n\n http://");
+            jQuery.getScript(window._url + '/static/client.js');
+        }
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', window._url + '/static/client.css'));
+
+        if (!window._cordova_loaded) {
+            // we are in browser
+            onDeviceReady();
+        }
+    }
+    setTimeout(load_from, 1000);
+</script>
+<script id="cjs" type="text/javascript" src="http://192.168.1.233:8000/static/client.js"
+        onload="window._loaded=1"></script>
+<body>
+<div class="side-panel side-panel-left" data-expose-aside="none" data-page="page3,list_items"
+     id="side-home">
+    <header class="header-bar">
+        <button class="btn pull-right icon icon-close" data-side-panel-close="true"></button>
+        <div class="pull-left">
+            <h1 class="title">Gentan Terminal</h1>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="input-wrapper">
+            <input class="with-label" type="number" id="no_search">
+            <label class="floating-label" for="no_search">No ile Ara</label>
+        </div>
+        <div class="input-wrapper">
+            <input class="with-label" type="text" id="text_search">
+            <label class="floating-label" for="text_search">Ad ile Ara</label>
+        </div>
+        <ul class="list">
+            <li><a class="padded-list">Yeni Hastalar</a></li>
+            <li><a class="padded-list">Test İlerlet</a></li>
+            <li><a class="padded-list">Test Aşamalarını Görüntüle</a></li>
+        </ul>
+    </div>
+</div>
+
+
+<list_items data-page="true" data-nocache="true"></list_items>
+<page3 data-page="true" data-nocache="true">
+    <header class="header-bar">
+        <button class="btn icon icon-menu pull-left" data-side-panel-id="side-home"></button>
+        <h1 class="title">Hoşgeldiniz</h1>
+    </header>
+    <div class="content">
+
+        <div class="circle-progress padded-full" id="loading">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+
+</page3>
+</body>
+</html>
