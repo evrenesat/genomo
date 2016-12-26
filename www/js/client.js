@@ -131,7 +131,7 @@ var Client = {
 
     MODAL: $('#myModal'),
     LOADING: '<div style="text-align:center"><img src="img/loading.gif" class="small_loading"></div>',
-    IFRAME: '<iframe class="hidden-frame"></iframe>',
+    IFRAME: '<iframe class="hidden-frame borderless"></iframe>',
 
     show_iframe: function (url, title) {
         if(title)this.set_title(title);

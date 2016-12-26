@@ -244,3 +244,6 @@ iframe.hidden-frame{
     font-size:24px;
     color:#c20900;
 }
+.borderless{
+    border:none;
+}
