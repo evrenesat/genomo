@@ -2,12 +2,9 @@ app.initialize();
 var Client = {
     "portraitMargins": null,
     "landscapeMargins": null,
-    'scan_cb': 'cb_open_admission',
-    openURL: function (url) {
-        Client.ifrm.attr('src', window._url.replace('/static', '') + url);
-    },
-    cb_open_admission: function (result) {
-        Client.openURL('/admin/lab/admission/' + result + '/');
+    'scan_cb': 'default_scan_action',
+    default_scan_action: function(result){
+        VIEWS.show_admission({params:[result]})
     },
     success: function (resultArray) {
         self = this;
@@ -117,7 +114,134 @@ var Client = {
         } else {
             db.setItem('lastReload', now);
         }
-    }
+    },
+
+    CONTENTIN: $('#contentin'),
+    render_page: function (template, data, title) {
+        console.log("set_page: " + template);
+        content = TEMPLATES[template](data)
+        if (title) {
+            this.set_title(title);
+        }
+        this.CONTENTIN.html(content);
+    },
+    set_title: function (title) {
+        $('#toolbar > h1').html(title);
+    },
+
+    MODAL: $('#myModal'),
+    LOADING: '<div style="text-align:center"><img src="img/loading.gif" class="small_loading"></div>',
+    IFRAME: '<iframe class="hidden-frame"></iframe>',
+
+    show_iframe: function (url, title) {
+        if(title)this.set_title(title);
+        var loading = $(this.LOADING).addClass('middle-center-top').css('left', (window.innerWidth / 2)-75 + 'px').css('top', (window.innerHeight / 2)-75 + 'px');
+        Client.MODAL.modal('hide');
+        this.close_sidemenu_if_not_locked();
+        $('body').append(loading);
+        var ifrm = $(Client.IFRAME).css('height',window.innerHeight-100+'px');
+        Client.CONTENTIN.html('').append(
+            ifrm.attr('src', url).on('load',function(){
+                loading.remove();
+                ifrm.css('opacity',1);
+            })
+        )
+    },
+    show_modal: function (content, title) {
+        if (!content) content = this.LOADING;
+        if (!title) title = '<div style="text-align:center">Yükleniyor</div>';
+        if (!this.MODAL.length) this.MODAL = $('#myModal');
+        this.MODAL.find('#myModalBody').html(content);
+        this.MODAL.find('#myModalLabel').html(title);
+
+        this.MODAL.modal('show');
+        this.MODAL.on('hidden.bs.modal', function(){
+            location.hash = '';
+        });
+    },
+    fill_modal: function (content, title) {
+        if (content) this.MODAL.find('#myModalBody').html(content);
+        if (title) this.MODAL.find('#myModalLabel').html(title);
+        this.MODAL.modal('handleUpdate');
+    },
+    MENU_LOCKED: false,
+    close_sidemenu_if_not_locked: function(){
+        if (!this.MENU_LOCKED) {
+            Client.snapper.close();
+        }
+    },
+    lock_sidemenu: function () {
+
+        if (!this.MENU_LOCKED) {
+            $('#lock-menu').addClass('selected');
+            this.MENU_LOCKED = true;
+            this.snapper.disable();
+            $('#contentin').css('float', 'left').css('width', (window.innerWidth - 265).toString() + 'px');
+        } else {
+            $('#lock-menu').removeClass('selected');
+            this.MENU_LOCKED = false;
+            this.snapper.enable();
+            this.snapper.close();
+            $('#contentin').css('width', '').css('float', '');
+        }
+    },
+
+    init_app: function () {
+
+        var self = this;
+        $('#contentin').css('width', window.innerWidth);
+
+        self.snapper = new Snap({
+            element: document.getElementById('content'),
+            disable: 'right'
+        });
+        $('#lock-menu').on('tap', function () {
+            self.lock_sidemenu();
+        });
+        $('#open-left').on('tap', function () {
+            console.log('taptap')
+            setTimeout("Client.snapper.open('left')",0);
+        });
+
+        $('#search_word, #search_num').on('focus', function () {
+            self.snapper.expand('left');
+        }).on('blur', function () {
+            self.snapper.open('left');
+        });
+
+        for (var k of Object.keys(TEMPLATES)) {
+            (function (page) {
+                var url = self.root_url + 'tpl/' + page + '.html';
+                $.get(url, function (result) {
+                    TEMPLATES[page] = doT.template(result);
+                })
+            })(k)
+        }
+
+        function parse_hash() {
+            var parts = location.hash.replace('#', '').split('/');
+            if (parts.length) {
+                var view = parts.splice(0, 1)[0];
+                return {view: view, params: parts}
+            } else {
+                console.log('parse_hash error: no hash to parse')
+            }
+
+
+        }
+
+        $(window).on('hashchange', function () {
+            // route dynamic page calls to requested method
+            console.log('hashchange event');
+            // console.log(event);
+            route = parse_hash();
+            if (route && VIEWS[route.view]) {
+                VIEWS[route.view](route);
+            }
+        }).trigger('hashchange');
+        self.snapper.open('left');
+
+    },
 };
 
 
@@ -135,74 +259,20 @@ function onDeviceReady() {
         Client.landscapeMargins = "0/" + _scan_top + "/" + _scan_left + "/0";
     }
 
+    Client.url = window._url;
+
+
     if (window.cordova) {
         Client.go_fullscreen();
         window.plugins.screensize.get(successCallback, successCallback);
         Client.scan();
         Client.crosswalk_sidepanel_workaround();
+        Client.root_url = ''
+    } else {
+        Client.root_url = window._url + '/static/www/';
     }
+    Client.init_app();
 
-
-    var TEMPL = {};
-    phonon.options({
-        navigator: {
-            defaultPage: 'page3',
-            animatePages: true,
-            enableBrowserBackButton: true,
-            templateRootDirectory: './tpl'
-        },
-        i18n: null // for this example, we do not use internationalization
-    });
-
-
-    var papp = phonon.navigator();
-    papp.on({page: 'home', preventClose: false});
-    papp.on({page: 'page3', preventClose: true})
-
-    document.on('pageopened', function (event) {
-        console.log('global state pagecreated: ' + event.detail.page)
-        if (event.detail.page == 'p3') {
-            $('p3 ul').append('<li><a class="padded-list" href="#!home">Zorta Zorta</a></li>');
-        }
-    });
-    papp.on({page: 'p3', content: null});
-
-
-    //    if(window.location.hash.indexOf('reloaded')==-1){
-    //        window.location.href = window.location.href + "?reloaded=1#reloaded=1";
-    //    }
-    papp.start();
-
-
-    phonon.sidePanel('#side-home').open();
-    phonon.preloader('#loading').show();
-
-
-    // Client.ifrm = $('#ifrm');
-
-    // Since under Android the plugin is no longer in its own Activity we have to handle
-    // the pause and resume lifecycle events ourselves.
-    // $('#scan').on('touchstart', Client.scan);
-    // $('#stop').on('touchstart', Client.stop);
-    // $('#buttons').append($('<div>cancel</div>').click(function(){window.location.reload();}));
-    // $('#buttons').append($('<button class="ui-btn">cancel</button>').on('touchstart', Client.cancel));
-    // $('#buttons').append($('<button class="ui-btn">FULLSCREEN</button>').on('touchstart', Client.go_fullscreen));
-    // $('button[value=reload]').click(function () {
-    //     window.location.reload();
-    // });
-
-    // setTimeout(function(){
-    //     $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', window._url+'/static/client.css') );
-    // }, 2500);
-    // setTimeout(function(){Client.openURL('/admin/');}, 1400);
-
-
-    // alert('boo');
-    // try {
-    //     phonon.sidePanel('#side-home').open()
-    // }catch(e){
-    //     window.location.reload();
-    // }
 
 }
 
