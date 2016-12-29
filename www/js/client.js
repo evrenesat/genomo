@@ -1,15 +1,27 @@
 app.initialize();
+function wiew(view, params) {
+    params = params || [];
+    location.hash = view + '/' + params.join('/');
+}
 var Client = {
     "portraitMargins": null,
     "landscapeMargins": null,
     'scan_cb': 'default_scan_action',
-    default_scan_action: function(result){
-        VIEWS.show_admission({params:[result]})
+    default_scan_action: function (result) {
+        VIEWS.scan_handler({params: result})
     },
     success: function (resultArray) {
         self = this;
         // alert("Scanned " + resultArray[0] + " code: " + resultArray[1]);
-        result = parseInt(resultArray[0].toString().slice(0, -1));
+        result = resultArray[0].toString().slice(0, -1);
+
+        if (result[0] == '9') {
+            // "lab" means this is an analyse barcode
+            result = ['lab', parseInt(result.slice(1))];
+        } else {
+            // "pro" means this is an admission barcode (PROtocol number)
+            result = ['pro', parseInt(result)];
+        }
         Client[Client.scan_cb](result);
         console.log(result);
 
@@ -21,6 +33,7 @@ var Client = {
     },
 
     scan: function () {
+        $('#camera-menu').addClass('activated');
         self = this;
         // See below for all available options.
         cordova.exec(Client.success, Client.failure, "ScanditSDK", "scan",
@@ -36,57 +49,22 @@ var Client = {
                     "beep": true,
                     "code128": true,
                     "dataMatrix": false,
-                    // "codeDuplicateFilter": 1500,
+                    "codeDuplicateFilter": 1000,
                     "continuousMode": true,
                     "portraitMargins": Client.portraitMargins,
                     "landscapeMargins": Client.landscapeMargins
                 }]);
-    },
-    stop: function () {
-        self = this;
-        cordova.exec(null, null, "ScanditSDK", "stop", []);
-        cordova.exec(null, null, "ScanditSDK", "resize",
-            [{
-                "portraitMargins": Client.portraitMargins,
-                "landscapeMargins": Client.landscapeMargins,
-                "animationDuration": 0.5,
-                "viewfinderSize": "0.8/0.2/0.6/0.4"
-            }]);
+        $('#camera-menu').removeClass('activated').addClass('selected');
     },
 
-    start: function () {
-        self = this;
-        cordova.exec(null, null, "ScanditSDK", "start", []);
-        cordova.exec(null, null, "ScanditSDK", "resize",
-            [{
-                "portraitMargins": Client.portraitMargins,
-                "landscapeMargins": Client.landscapeMargins,
-                "animationDuration": 0.5,
-                "viewfinderSize": "0.8/0.4/0.6/0.4"
-            }]);
-    },
 
     cancel: function () {
+        $('#camera-menu').addClass('activated');
         self = this;
         cordova.exec(null, null, "ScanditSDK", "cancel", []);
+        $('#camera-menu').removeClass('selected').removeClass('activated');
     },
 
-
-    onPause: function () {
-        self = this;
-        // Only stop the scanner under Android, under iOS it is automatically stopped.
-        if (device.platform == "Android") {
-            cordova.exec(null, null, "ScanditSDK", "stop", []);
-        }
-    },
-
-    onResume: function () {
-        self = this;
-        // Only start the scanner under Android, under iOS it is automatically restarted.
-        if (device.platform == "Android") {
-            cordova.exec(null, null, "ScanditSDK", "start", []);
-        }
-    },
 
     go_fullscreen: function () {
         function log_event(val) {
@@ -101,19 +79,6 @@ var Client = {
         }
 
         AndroidFullScreen.showSystemUI(log_event, log_event);
-    },
-
-    crosswalk_sidepanel_workaround: function () {
-        // https://github.com/quark-dev/Phonon-Framework/issues/157
-
-        var lastReload = parseInt(db.getItem('lastReload'));
-        now = +new Date();
-        if (!lastReload || (lastReload && now - lastReload > 5000)) {
-            db.setItem('lastReload', now);
-            window.location.reload();
-        } else {
-            db.setItem('lastReload', now);
-        }
     },
 
     CONTENTIN: $('#contentin'),
@@ -134,16 +99,23 @@ var Client = {
     IFRAME: '<iframe class="hidden-frame borderless"></iframe>',
 
     show_iframe: function (url, title) {
-        if(title)this.set_title(title);
-        var loading = $(this.LOADING).addClass('middle-center-top').css('left', (window.innerWidth / 2)-75 + 'px').css('top', (window.innerHeight / 2)-75 + 'px');
+        var self = this;
+        this.set_title(title || '');
+        var loading = $(this.LOADING).addClass('middle-center-top').css('left', (window.innerWidth / 2) - 75 + 'px').css('top', (window.innerHeight / 2) - 75 + 'px');
         Client.MODAL.modal('hide');
         this.close_sidemenu_if_not_locked();
         $('body').append(loading);
-        var ifrm = $(Client.IFRAME).css('height',window.innerHeight-100+'px');
+        var ifrm = $(Client.IFRAME).css('height', window.innerHeight - 100 + 'px');
         Client.CONTENTIN.html('').append(
-            ifrm.attr('src', url).on('load',function(){
+            ifrm.attr('src', url).on('load', function () {
+                ifrm.contents().find("head").append($("<link/>",
+                    {
+                        rel: "stylesheet",
+                        href: self.url + "/static/mobilize.css",
+                        type: "text/css"
+                    }));
                 loading.remove();
-                ifrm.css('opacity',1);
+                ifrm.css('display', 'block');
             })
         )
     },
@@ -155,7 +127,7 @@ var Client = {
         this.MODAL.find('#myModalLabel').html(title);
 
         this.MODAL.modal('show');
-        this.MODAL.on('hidden.bs.modal', function(){
+        this.MODAL.on('hidden.bs.modal', function () {
             location.hash = '';
         });
     },
@@ -165,7 +137,7 @@ var Client = {
         this.MODAL.modal('handleUpdate');
     },
     MENU_LOCKED: false,
-    close_sidemenu_if_not_locked: function(){
+    close_sidemenu_if_not_locked: function () {
         if (!this.MENU_LOCKED) {
             Client.snapper.close();
         }
@@ -185,39 +157,91 @@ var Client = {
             $('#contentin').css('width', '').css('float', '');
         }
     },
-
-    init_app: function () {
-
+    MENU_CONTAINER: $('div#snap-drawer-left'),
+    load_menu_content: function () {
         var self = this;
-        $('#contentin').css('width', window.innerWidth);
-
-        self.snapper = new Snap({
-            element: document.getElementById('content'),
-            disable: 'right'
+        this.MENU_CONTAINER.html(TEMPLATES['menu']());
+        ////// Bind Search boxes ////////////////////////////
+        $('#search_test_no').on('keydown', function (ev) {
+            if (ev.keyCode == 9 || ev.keyCode == 13) {
+                wiew('show_analyse', [$('#search_test_no').val()])
+            }
         });
-        $('#lock-menu').on('tap', function () {
-            self.lock_sidemenu();
+        $('#search_admission_no').on('keydown', function (ev) {
+            if (ev.keyCode == 9 || ev.keyCode == 13) {
+                wiew('admission_search', ['by_no', $('#search_admission_no').val()])
+            }
         });
-        $('#open-left').on('tap', function () {
-            console.log('taptap')
-            setTimeout("Client.snapper.open('left')",0);
-        });
-
-        $('#search_word, #search_num').on('focus', function () {
-            self.snapper.expand('left');
-        }).on('blur', function () {
-            self.snapper.open('left');
+        $('#search_admission').on('keydown', function (ev) {
+            if (ev.keyCode == 9 || ev.keyCode == 13) {
+                wiew('admission_search', ['by_word', $('#search_admission').val()])
+            }
         });
 
+
+        var cambtn = $('<button id="camera-menu" class="glyphicon glyphicon-camera"/>');
+
+        // barcode scanner open/close button
+        cambtn.on('tap', function () {
+            if (cambtn.hasClass('selected')) {
+                self.cancel();
+            } else {
+                self.scan();
+            }
+        });
+        $('div.snap-drawer.snap-drawer-left').append(cambtn);
+
+
+    },
+    load_templates: function () {
+        var self = this;
         for (var k of Object.keys(TEMPLATES)) {
             (function (page) {
                 var url = self.root_url + 'tpl/' + page + '.html';
                 $.get(url, function (result) {
                     TEMPLATES[page] = doT.template(result);
+                    $(self).trigger(page + '_template_loaded');
                 })
             })(k)
         }
+    },
+    preload_data: function () {
+        $.get(window._url + '/lab/api/list_analyse_types/', {}, function (result) {
+            VIEWS.ANALYSE_TYPES = result;
+        });
+    },
+    init_app: function () {
+        $(this).on('menu_template_loaded', this.load_menu_content);
+        this.load_templates();
 
+        var self = this;
+
+        var self = this;
+        $('#contentin').css('width', window.innerWidth);
+
+        // init sidemenu
+        self.snapper = new Snap({
+            element: document.getElementById('content'),
+            disable: 'right'
+        });
+
+        // lock menu button
+        $('#lock-menu').on('tap', function () {
+            self.lock_sidemenu();
+        });
+        // menu open button
+        $('#open-left').on('tap', function () {
+            setTimeout("Client.snapper.open('left')", 0);
+        });
+
+        // $('#search_word, #search_num').on('focus', function () {
+        //     self.snapper.expand('left');
+        // }).on('blur', function () {
+        //     self.snapper.open('left');
+        // });
+
+
+        ////////// route hash changes to view methods /////////////////
         function parse_hash() {
             var parts = location.hash.replace('#', '').split('/');
             if (parts.length) {
@@ -236,9 +260,16 @@ var Client = {
             // console.log(event);
             route = parse_hash();
             if (route && VIEWS[route.view]) {
+                $('img.small_loading').remove();
                 VIEWS[route.view](route);
             }
         }).trigger('hashchange');
+        ////////////////////////////////////////////////////////////////
+
+
+        ////////////////////////////////////////////////////////////////
+
+        // open sidemenu on page load
         self.snapper.open('left');
 
     },
@@ -253,11 +284,16 @@ function onDeviceReady() {
     function successCallback(winSize) {
         console.log('size cb called');
         window.winSize = winSize;
-        var _scan_top = winSize.height - 175;
-        var _scan_left = winSize.width - 150;
+        var _scan_top = window.innerHeight - 175;
+        var _scan_left = window.innerWidth - 150;
         Client.portraitMargins = "0/" + _scan_top + "/" + _scan_left + "/0";
         Client.landscapeMargins = "0/" + _scan_top + "/" + _scan_left + "/0";
     }
+
+    var _scan_top = window.innerHeight - 175;
+    var _scan_left = window.innerWidth - 150;
+    Client.portraitMargins = "0/" + _scan_top + "/" + _scan_left + "/0";
+    Client.landscapeMargins = "0/" + _scan_top + "/" + _scan_left + "/0";
 
     Client.url = window._url;
 
@@ -265,12 +301,13 @@ function onDeviceReady() {
     if (window.cordova) {
         Client.go_fullscreen();
         window.plugins.screensize.get(successCallback, successCallback);
-        Client.scan();
-        Client.crosswalk_sidepanel_workaround();
-        Client.root_url = ''
+        // Client.scan();
+        // Client.root_url = '';
+        Client.root_url = window._url + '/static/www/';
     } else {
         Client.root_url = window._url + '/static/www/';
     }
+    Client.preload_data();
     Client.init_app();
 
 

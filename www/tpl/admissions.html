@@ -6,13 +6,23 @@
             <!--<div class="panel-body">-->
             <!--<p>Some default panel content here.</p>-->
             <!--</div>-->
-            <ul class="list-group">
-                {{~it.items :li}}
-                <li class="list-group-item"><a class="padded-list"
-                                               href="#show_admission/{{=li.id}}">{{=li.title}}</a>
-                </li>
+            <div class="list-group">
+
+                {{~it.items :li:idx}}
+                <a class="list-group-item {{? idx%2}}zebra{{?}}" href="#show_admission/{{=li.id}}">
+
+                    <h4 class="list-group-item-heading">{{? li.is_urgent}}<div class="big-red glyphicon glyphicon-exclamation-sign"></div>{{?}} {{=li.title}}</h4>
+                    <table class="table colony">
+                        <tr>
+                            <th>Kurum</th><td>{{=li.institution}}</td>
+                            <th>Doğum tarihi</th><td>{{=li.birthdate}}</td>
+                            <th>Geliş tarihi</th><td>{{=li.timestamp.split('T')[0]}}</td>
+                        </tr>
+                    </table>
+
+                </a>
                 {{~}}
-            </ul>
+            </div>
         </div>
     </div>
 </content>

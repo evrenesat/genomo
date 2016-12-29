@@ -1,0 +1,149 @@
+<content>
+    {{? (it.analyse && it.analyse2) ||(it.analyse && it.admission)}}
+    <div class="col-md-12">
+        {{? (it.analyse && it.analyse2 && it.analyse.id == it.analyse2.id) || (it.analyse &&
+        it.admission && it.admission.id == it.analyse.admission_id)}}
+        <div class="alert alert-success alert-dismissable">
+            <strong>BAŞARILI!</strong> İşlem başarılı. Test aşaması kaydedildi.
+        </div>
+        {{??}}
+        <div class="alert alert-danger alert-dismissable">
+            <strong>HATA!</strong> Okuttuğunuz barkodlar eşleşmedi.
+        </div>
+        {{?}}
+    </div>
+    {{?}}
+    <div class="col-md-6">
+        {{? it.analyse }}
+        <div class="panel panel-default">
+            <div class="panel-heading">Test Bilgileri</div>
+            <table class="table colony">
+                <tr>
+                    <th>Test</th>
+                    <td>{{=it.analyse.name}}</td>
+                </tr>
+                <tr>
+                    <th>Hasta</th>
+                    <td>{{=it.analyse.patient_name}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Kurum</th>
+                    <td>{{=it.analyse.institution}}</td>
+                </tr>
+                <tr>
+                    <th>Acil</th>
+                    <td>{{? it.analyse.is_urgent}}
+                        <div class="big-red glyphicon glyphicon-exclamation-sign"></div>
+                        {{??}}-{{?}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Doğum tarihi</th>
+                    <td>{{=it.analyse.birthdate}}</td>
+                </tr>
+                <tr>
+                    <th>Geliş tarihi</th>
+                    <td>{{=it.analyse.timestamp.split('T')[0]}}</td>
+                </tr>
+                <tr>
+                    <th>Örnek tipi</th>
+                    <td>{{=it.analyse.sample_type}}</td>
+                </tr>
+                <tr>
+                    <th>Dış Lab</th>
+                    <td>{{=it.analyse.external}}</td>
+                </tr>
+            </table>
+
+
+        </div>
+    </div>
+
+    {{?}}
+
+    </div>
+    <div class="col-md-6">
+        {{? it.analyse2 }}
+        <div class="panel panel-default">
+            <div class="panel-heading">Test Bilgileri</div>
+            <table class="table colony">
+                <tr>
+                    <th>Test</th>
+                    <td>{{=it.analyse2.name}}</td>
+                </tr>
+                <tr>
+                    <th>Hasta</th>
+                    <td>{{=it.analyse2.patient_name}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Kurum</th>
+                    <td>{{=it.analyse2.institution}}</td>
+                </tr>
+                <tr>
+                    <th>Acil</th>
+                    <td>{{? it.analyse2.is_urgent}}
+                        <div class="big-red glyphicon glyphicon-exclamation-sign"></div>
+                        {{??}}-{{?}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Doğum tarihi</th>
+                    <td>{{=it.analyse2.birthdate}}</td>
+                </tr>
+                <tr>
+                    <th>Geliş tarihi</th>
+                    <td>{{=it.analyse2.timestamp.split('T')[0]}}</td>
+                </tr>
+                <tr>
+                    <th>Örnek tipi</th>
+                    <td>{{=it.analyse2.sample_type}}</td>
+                </tr>
+                <tr>
+                    <th>Dış Lab</th>
+                    <td>{{=it.analyse2.external}}</td>
+                </tr>
+            </table>
+
+
+        </div>
+        {{?}}
+
+        {{? it.admission }}
+        <div class="panel panel-default">
+            <div class="panel-heading">Hasta Kabul Bilgileri</div>
+            <table class="table colony">
+
+                <tr>
+                    <th>Hasta</th>
+                    <td>{{=it.admission.patient_name}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Kurum</th>
+                    <td>{{=it.admission.institution}}</td>
+                </tr>
+                <tr>
+                    <th>Acil</th>
+                    <td>{{? it.admission.is_urgent}}
+                        <div class="big-red glyphicon glyphicon-exclamation-sign"></div>
+                        {{??}}-{{?}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Doğum tarihi</th>
+                    <td>{{=it.admission.birthdate}}</td>
+                </tr>
+                <tr>
+                    <th>Geliş tarihi</th>
+                    <td>{{=it.admission.timestamp.split('T')[0]}}</td>
+                </tr>
+            </table>
+
+
+        </div>
+        {{?}}
+
+    </div>
+</content>

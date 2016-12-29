@@ -49,11 +49,11 @@
                     <td>{{=li.external}}</td>
                 <tr>
                     <td colspan="6" class="no-border">
-                        <div class="col-md-1">
-                            <button type="button" class="btn btn-block">Aç</button>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-block" onclick="location.hash = 'show_analyse/{{=li.id}}/{{=li.name}}'">Aç</button>
                         </div>
                         <div class="col-md-3">
-                            <button type="button" class="btn btn-block" onclick="location.hash = 'change_analyse_state/{{=li.id}}/{{=li.name}}'">İlerlet</button>
+                            <button type="button" class="btn btn-block" onclick="location.hash = 'change_analyse_state_admin/{{=li.id}}/{{=li.name}}'">İlerlet</button>
                         </div>
                         <div class="col-md-3">
                             <button type="button" class="btn btn-block" onclick="location.hash = 'enter_results/{{=li.id}}/{{=li.name}}'">Sonuç Gir</button>

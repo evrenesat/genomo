@@ -1,0 +1,65 @@
+<content>
+    <div class="col-md-4">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Test Tipi Seçiniz</div>
+            <div class="list-group">
+
+                {{~it.analyse_types :li:idx}}
+                <a class="list-group-item {{? idx%2}}zebra{{?}} {{? li.id == it.selected_analyse_type_id}}active{{?}}" href="#change_analyse_state/{{=li.id}}" >
+                    <h4 class="list-group-item-heading">{{=li.name}} {{=li.category__name||''}} </h4>
+                </a>
+
+                {{~}}
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="col-md-4">
+        {{?it.selected_analyse_type_id}}
+        <div class="panel panel-default">
+            <div class="panel-heading">Aşama Seçiniz</div>
+            <div class="list-group">
+
+                {{~it.analyse_type_states :li:idx}}
+                <a class="list-group-item {{? idx%2}}zebra{{?}} {{? li.id == it.selected_state_id}}active{{?}}"
+                   href="#change_analyse_state/{{=it.selected_analyse_type_id}}/{{=li.id}}/{{? li.require_double_check}}1{{??}}0{{?}}" >
+                    <h4 class="list-group-item-heading">{{=li.name}} </h4>
+                </a>
+
+                {{~}}
+
+            </div>
+        </div>
+        {{?}}
+    </div>
+    <div class="col-md-4">
+        {{?it.selected_state_id}}
+        <div class="panel panel-default">
+
+            <div class="panel-heading">Atama Yöntemi Seçiniz</div>
+
+            <p>
+            {{? it.require_double_check}}
+            <div class="alert alert-warning">
+                     <!--<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>-->
+                     <strong>Uyarı!</strong> Bu aşama barkodlarının ardışık okutularak eşleştirilmesini gerektirir.
+                   </div>
+
+            {{?}}
+            <h4>Aşamalandırma Oturumunu Başlat :
+            <label class="toggle">
+                			  <input id="analyse_state_session_switch" onchange="VIEWS.handle_analyse_state_session()" type="checkbox" >
+                			  <span class="handle"></span>
+                			</label></h4>
+
+            </p>
+
+        </div>
+        {{?}}
+
+
+    </div>
+</content>

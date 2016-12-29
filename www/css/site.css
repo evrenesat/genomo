@@ -998,13 +998,13 @@ a.glyphicon:visited {
 }
 
 html {
-    font-size: 10px;
+    font-size: 14px;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
 }
 
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 18px;
     line-height: 1.42857143;
     color: #333;
     background-color: #fff
@@ -2961,7 +2961,7 @@ select[multiple].form-group-lg .form-control, select[multiple].input-lg, textare
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 400;
     line-height: 1.42857143;
     text-align: center;

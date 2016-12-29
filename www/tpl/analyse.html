@@ -1,0 +1,92 @@
+<content>
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Hasta Kabul Bilgileri</div>
+            <div class="panel-body">
+                <div class="col-md-12">
+                    <table class="table colony">
+                        <tr>
+                            <th>Test</th>
+                            <td>{{=it.name}}</td>
+                            <th>Hasta</th>
+                            <td>{{=it.patient_name}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Kurum</th>
+                            <td>{{=it.institution}}</td>
+                            <th>Acil</th>
+                            <td>{{? it.is_urgent}}
+                                <div class="big-red glyphicon glyphicon-exclamation-sign"></div>
+                                {{??}}-{{?}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Doğum tarihi</th>
+                            <td>{{=it.birthdate}}</td>
+                            <th>Geliş tarihi</th>
+                            <td>{{=it.timestamp.split('T')[0]}}</td>
+                        </tr>
+                        <tr>
+                            <th>Örnek tipi</th>
+                            <td>{{=it.sample_type}}</td>
+                            <th>Dış Lab</th>
+                            <td>{{=it.external}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div>
+
+
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-block"
+                                onclick="location.hash = 'change_analyse_state_admin/{{=it.id}}/{{=it.name}}'">
+                            İlerlet
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-block"
+                                onclick="location.hash = 'enter_results/{{=it.id}}/{{=it.name}}'">
+                            Sonuç Gir
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    <div class="panel panel-default">
+        {{? it.states}}
+        <div class="panel-heading">Test Aşamaları</div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>Grup</th>
+                <th>Personel</th>
+                <th>Durum</th>
+                <th>Notlar</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {{~it.states :li:idx}}
+
+            <tr>
+                <td>{{=li.timestamp.split('T')[0]}}</td>
+                <td>{{=li.group}}</a></td>
+                <td>{{=li.personnel__user__username}}</td>
+                <td class="overtd1">{{=li.definition__name}}</td>
+                <td class="overtd1">{{=li.comment||''}}</td>
+
+            </tr>
+
+            {{~}}
+            </tbody>
+        </table>
+{{?}}
+    </div>
+    </div>
+</content>

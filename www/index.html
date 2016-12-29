@@ -9,7 +9,7 @@
 
     <!--<link rel="stylesheet" type="text/css" href="css/index.css"/>-->
     <link rel="stylesheet" type="text/css" href="css/bootflat.css"/>
-    <link rel="stylesheet" type="text/css" href="css/site.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="css/site.css"/>-->
     <link rel="stylesheet" type="text/css" href="css/snap.css"/>
     <!--<link rel="stylesheet" type="text/css" href="css/client.css"/>-->
     <script type="text/javascript" src="js/snap.js"></script>
@@ -25,13 +25,14 @@
 <script type="text/javascript" src="cordova.js" onload="window._cordova_loaded=1"></script>
 <script>
     var _url = 'http://192.168.1.233:8000'
-    var _url = 'http://127.0.0.1:8000'
+    //    var _url = 'http://127.0.0.1:8000'
     var _root_url = _url + '/static/www/';
     // UNCOMMENT this before production
     //    var _root_url = '';
     jQuery.getScript(window._root_url + '/js/client.js');
     jQuery.getScript(window._root_url + '/js/views.js');
     $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', window._root_url + '/css/client.css'));
+    $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', window._root_url + '/css/site.css'));
     function load_from() {
         if (!window._cordova_loaded) {
             // we are in browser
@@ -42,38 +43,12 @@
 </script>
 <body>
 <div class="snap-drawers">
-    <div class="snap-drawer snap-drawer-left">
-        <h4>Genesis Terminal
-            <div id="lock-menu-cont"><a href="#" id="lock-menu"
-                                        class="glyphicon glyphicon glyphicon-lock"></a></div>
-        </h4>
-        <div class="search">
-            <input type="text" class="search_in" id="search_word" placeholder="Ad ile Ara">
+    <div class="snap-drawer snap-drawer-left" id="snap-drawer-left">
 
-        </div>
-
-
-        <div class="search">
-            <input type="number" class="search_in" id="search_num" placeholder="No ile Ara">
-        </div>
-        <div class="drawer-inner">
-            <ul>
-                <li><a class="padded-list" href="#list_items">Test İlerlet</a></li>
-                <li><a class="padded-list" href="#list_states">Test Aşamalarını Görüntüle</a>
-                    <ul>
-                        <li><a class="padded-list" href="#harvest_state">|- Harvest</a>
-                        <li><a class="padded-list" href="#seed_state">|- Ekim</a>
-                    </ul>
-                </li>
-                <li><a class="padded-list" href="#new_patients">Yeni
-                    Gelenler</a></li>
-                <!--<li><a class="padded-list" href="#!home">Bugün Çıkanlar</a></li>-->
-            </ul>
-
-        </div>
     </div>
-</div>
-<div class="snap-drawer snap-drawer-right"></div>
+    <div class="snap-drawer snap-drawer-right">
+
+    </div>
 </div>
 
 
@@ -92,21 +67,22 @@
 </div>
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">...</h4>
-      </div>
-      <div class="modal-body" id="myModalBody">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">...</h4>
+            </div>
+            <div class="modal-body" id="myModalBody">
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
-        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-      </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 </body>
