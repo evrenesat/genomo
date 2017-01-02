@@ -3,7 +3,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">Test Tipi Seçiniz</div>
-            <div class="list-group">
+            <div class="list-group overflow-box xxxxl">
 
                 {{~it.analyse_types :li:idx}}
                 <a class="list-group-item {{? idx%2}}zebra{{?}} {{? li.id == it.selected_analyse_type_id}}active{{?}}" href="#change_analyse_state/{{=li.id}}" >
@@ -21,7 +21,7 @@
         {{?it.selected_analyse_type_id}}
         <div class="panel panel-default">
             <div class="panel-heading">Aşama Seçiniz</div>
-            <div class="list-group">
+            <div class="list-group  overflow-box xxxxl">
 
                 {{~it.analyse_type_states :li:idx}}
                 <a class="list-group-item {{? idx%2}}zebra{{?}} {{? li.id == it.selected_state_id}}active{{?}}"
@@ -39,7 +39,7 @@
         {{?it.selected_state_id}}
         <div class="panel panel-default">
 
-            <div class="panel-heading">Atama Yöntemi Seçiniz</div>
+            <!--<div class="panel-heading">Atama Yöntemi Seçiniz</div>-->
 
             <p>
             {{? it.require_double_check}}

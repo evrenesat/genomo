@@ -17,7 +17,8 @@ var Client = {
 
         if (result[0] == '9') {
             // "lab" means this is an analyse barcode
-            result = ['lab', parseInt(result.slice(1))];
+
+            result = ['lab', parseInt(result.slice(2)), parseInt(result[1])];
         } else {
             // "pro" means this is an admission barcode (PROtocol number)
             result = ['pro', parseInt(result)];
@@ -83,7 +84,8 @@ var Client = {
 
     CONTENTIN: $('#contentin'),
     render_page: function (template, data, title) {
-        console.log("set_page: " + template);
+        console.log("render_page with data: " + template);
+        console.log(data);
         content = TEMPLATES[template](data)
         if (title) {
             this.set_title(title);
@@ -278,6 +280,10 @@ var Client = {
 
 function onDeviceReady() {
     window.db = window.localStorage;
+
+    $( document ).ajaxError(function() {
+      console.log(parameters)
+    });
 
 
     console.log('device ready');

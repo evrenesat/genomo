@@ -8,6 +8,7 @@ var TEMPLATES = {
     'menu': '',
     'change_analyse_state': '',
     'barcode_check': '',
+    'change_selected_analyse_state': '',
 };
 
 VIEWS = {
@@ -50,11 +51,11 @@ VIEWS = {
     CURRENT_BARCODES: [],
     CURRENT_ADMISSION: null,
     CURRENT_ANALYSE: null,
-    CURRENT_ANALYSE2: null,
     set_states_by_barcode_double: function (route) {
         var self = this;
         type = route.params[0];
         pk = route.params[1];
+        group = route.params[2];
         var admission_url = window._url + '/lab/api/get_admission/' + pk;
         var analyse_url = window._url + '/lab/api/get_analyse/' + pk;
         Client.show_modal();
@@ -68,9 +69,12 @@ VIEWS = {
             });
         } else {
             if (self.CURRENT_ANALYSE) {
-                var result = {analyse: self.CURRENT_ANALYSE}
-                if (self.CURRENT_ANALYSE.id == pk) {
+
+                var result = {analyse: self.CURRENT_ANALYSE};
+                if (self.CURRENT_ANALYSE.id == pk && group == self.CURRENT_ANALYSE.group) {
                     result.analyse2 = result.analyse;
+                    result.analyse2.group = group;
+
                     self.do_barcodes_match();
                 } else {
                     self.do_barcodes_error();
@@ -80,6 +84,7 @@ VIEWS = {
             } else {
                 $.get(analyse_url, function (result) {
                     self.CURRENT_ANALYSE = result.analyse = result;
+                    self.CURRENT_ANALYSE.group = group;
                     result.admission = self.CURRENT_ADMISSION;
                     Client.fill_modal(TEMPLATES['barcode_check'](result), result.patient_name);
                     self.check_if_barcodes_match();
@@ -94,6 +99,7 @@ VIEWS = {
         var self = this;
         type = route.params[0];
         pk = route.params[1];
+        group = route.params[2];
         var admission_url = window._url + '/lab/api/get_admission/' + pk;
         var analyse_url = window._url + '/lab/api/get_analyse/' + pk;
         // Client.show_modal();
@@ -105,10 +111,29 @@ VIEWS = {
                 state_definition: this.SELECTED_STATE
             })
         } else {
-            self.save_analyse_state({analyse: pk,
+            self.save_analyse_state({
+                analyse: pk,
                 analyse_type: self.SELECTED_ANALYSE_TYPE,
-                state_definition: this.SELECTED_STATE});
+                state_definition: this.SELECTED_STATE,
+                group: group
+            });
         }
+    },
+    set_states_by_hand: function (route) {
+        pk = route.params[0];
+        selected_definition_id = route.params[1] || 0;
+        var url = window._url + '/lab/api/get_analyse/' + pk;
+        Client.show_modal();
+        $.get(url, {add_type_states: 1, selected_definition_id: selected_definition_id},
+            function (result) {
+                if (route.context) {
+                    Object.assign(result, route.context);
+                    console.log(result);
+                }
+                result.selected_definition_id = selected_definition_id;
+                Client.fill_modal(TEMPLATES['change_selected_analyse_state'](result), result.patient_name);
+            });
+
     },
     check_if_barcodes_match: function () {
         if (this.CURRENT_ADMISSION && this.CURRENT_ANALYSE) {
@@ -123,7 +148,6 @@ VIEWS = {
         console.log('ERROR, codes DO NOT match!!!');
         this.CURRENT_ADMISSION = null;
         this.CURRENT_ANALYSE = null;
-        this.CURRENT_ANALYSE2 = null;
 
 
     },
@@ -133,11 +157,10 @@ VIEWS = {
         this.save_analyse_state({
             analyse: this.CURRENT_ANALYSE.id,
             analyse_type: self.SELECTED_ANALYSE_TYPE,
-            definition: this.SELECTED_STATE
+            state_definition: this.SELECTED_STATE
         });
         this.CURRENT_ADMISSION = null;
         this.CURRENT_ANALYSE = null;
-        this.CURRENT_ANALYSE2 = null;
 
     },
     save_analyse_state: function (params) {
@@ -147,9 +170,8 @@ VIEWS = {
         $.post(url, params, function (result) {
             if (result.result == 'Success') {
                 console.log('SAVED', result);
-                setTimeout(function () {
-                    self.show_analyse({params: [result.analyse_id]}, result);
-                }, 2000);
+                self.show_analyse({params: [result.analyse_id], context: result});
+
             } else {
                 alert(result.error);
                 console.log('Error', result);
@@ -221,14 +243,18 @@ VIEWS = {
             Client.fill_modal(TEMPLATES['admission'](result), result.patient_name);
         });
     },
-    show_analyse: function (route, context) {
+    show_analyse: function (route) {
 
         var self = this;
         console.log(route);
         var url = window._url + '/lab/api/get_analyse/' + route.params[0];
         Client.show_modal();
         $.get(url, function (result) {
-            Object.assign(result, context || {});
+            if (route.context) {
+                Object.assign(result, route.context);
+                console.log(result);
+            }
+
             Client.fill_modal(TEMPLATES['analyse'](result), result.patient_name);
         });
     },

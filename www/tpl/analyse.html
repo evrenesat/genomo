@@ -41,13 +41,13 @@
 
                     <div class="col-md-3">
                         <button type="button" class="btn btn-block"
-                                onclick="location.hash = 'change_analyse_state_admin/{{=it.id}}/{{=it.name}}'">
+                                onclick="wiew('set_states_by_hand', [{{=it.id}}])">
                             İlerlet
                         </button>
                     </div>
                     <div class="col-md-3">
                         <button type="button" class="btn btn-block"
-                                onclick="location.hash = 'enter_results/{{=it.id}}/{{=it.name}}'">
+                                onclick="wiew('enter_results',[{{=it.id}},{{=it.name}}])">
                             Sonuç Gir
                         </button>
                     </div>
@@ -74,7 +74,7 @@
 
             {{~it.states :li:idx}}
 
-            <tr>
+            <tr {{? it.state_id == li.id}}style="background-color:green;color:#fff"{{?}}>
                 <td>{{=li.timestamp.split('T')[0]}}</td>
                 <td>{{=li.group}}</a></td>
                 <td>{{=li.personnel__user__username}}</td>

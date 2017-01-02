@@ -1,0 +1,138 @@
+<content class="col-md-12">
+    <div class="col-md-12">
+        <table class="table colony">
+            <tr>
+                <th>Test</th>
+                <td>{{=it.name}}</td>
+                <th>Hasta</th>
+                <td>{{=it.patient_name}}
+                </td>
+            </tr>
+            <tr>
+                <th>Kurum</th>
+                <td>{{=it.institution}}</td>
+                <th>Acil</th>
+                <td>{{? it.is_urgent}}
+                    <div class="big-red glyphicon glyphicon-exclamation-sign"></div>
+                    {{??}}-{{?}}
+                </td>
+            </tr>
+            <tr>
+                <th>Doğum tarihi</th>
+                <td>{{=it.birthdate}}</td>
+                <th>Geliş tarihi</th>
+                <td>{{=it.timestamp.split('T')[0]}}</td>
+            </tr>
+            <tr>
+                <th>Örnek tipi</th>
+                <td>{{=it.sample_type}}</td>
+                <th>Dış Lab</th>
+                <td>{{=it.external}}</td>
+            </tr>
+            {{? it.no_of_groups>1}}
+            <tr>
+                <th>Grup Sayısı</th>
+                <td>{{=it.no_of_groups}}</td>
+                <th></th>
+                <td></td>
+            </tr>
+            {{?}}
+        </table>
+    </div>
+    <div class="col-md-4">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Testin Önceki Aşamaları</div>
+            <div class="list-group">
+
+                {{~it.states :li:idx}}
+                <a class="list-group-item {{? idx%2}}zebra{{?}}" href="#show_admission/{{=li.id}}"
+                   {{? it.state_id== li.id}}style="background-color:green;color:#fff" {{?}}>
+                    <h4>{{=li.definition__name}}</h4>
+                    {{? li.comment}}{{=li.comment}}<br/>{{?}}
+                    {{?it.no_of_groups>1}}#{{=li.group}} / {{?}}{{=li.timestamp.split('T')[0]}} /
+                    {{=li.personnel__user__username}}
+                </a>
+
+                {{~}}
+
+            </div>
+
+
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Atanacak Aşamayı Seçiniz</div>
+            <div class="list-group overflow-box xl">
+
+                {{~it.analyse_type_states :li:idx}}
+                <a class="list-group-item {{? idx%2}}zebra{{?}} {{? li.id == it.selected_definition_id}}active{{?}}"
+                   href="#set_states_by_hand/{{=it.id}}/{{=li.id}}">
+                    <h4 class="list-group-item-heading">{{=li.name}} </h4>
+                </a>
+
+                {{~}}
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        {{?it.selected_definition_id}}
+        <div class="panel panel-default">
+            <input id="comment" type="text" class="form-control"
+                   style="margin-bottom: 20px; padding:5px;" placeholder="Yorum yazabilirsiniz">
+            {{? it.comments.presets.length}}
+            <div class="panel-heading">Mevcut yorumlardan birini de kullanabilirsiniz:</div>
+            <div class="list-group  overflow-box x">
+
+                {{~it.comments.presets :li:idx}}
+                <a class="list-group-item {{? idx%2}}zebra{{?}}"
+                   href="javascript:$('#comment').val('{{=li}}')">
+                    <h4 class="list-group-item-heading">{{=li}} </h4>
+                </a>
+
+                {{~}}
+
+            </div>
+            {{?}}
+            <p>
+                {{? it.require_double_check}}
+            <div class="alert alert-warning">
+                <!--<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>-->
+                <strong>Uyarı!</strong> Bu aşama barkodlarının ardışık okutularak eşleştirilmesini
+                gerektirir.
+            </div>
+
+            {{?}}
+
+            {{? it.no_of_groups>1 }}
+            <div style="padding-left:10px;">
+                Çalışma Grubu:
+            <div class="myradio">
+                <div><input class="iradio_" type="radio" id="flat-radio-1" value="1" name="group">
+                <label for="flat-radio-1">1</label></div>
+                <div><input class="iradio_" type="radio" id="flat-radio-2" value="2" name="group">
+                <label for="flat-radio-2">2</label></div>
+                <div><input class="iradio_" type="radio" id="flat-radio-3" value="3" name="group">
+                <label for="flat-radio-3">3</label></div>
+                <div><input class="iradio_" type="radio" id="flat-radio-4" value="4" name="group">
+                <label for="flat-radio-4">4</label></div>
+                <div><input class="iradio_" type="radio" id="flat-radio-100" value="100" name="group">
+                <label for="flat-radio-100">Tümü</label></div>
+
+            </div>
+            </div>
+            {{?}}
+
+
+            <button type="button" class="btn btn-block btn-success"
+                    onclick="VIEWS.save_analyse_state({analyse:{{=it.id}}, state_definition:{{=it.selected_definition_id}}, comment:$('#comment').val(), group: $('input[name=group]:checked').val()})">
+                Aşamayı Kaydet
+            </button>
+        </div>
+        {{?}}
+
+
+    </div>
+</content>

@@ -1,7 +1,7 @@
 html {
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 /* Show "Left" drawer for the "Right" drawer in the demo */
@@ -49,7 +49,7 @@ html {
     margin: 10px;
 }
 
-button.selected{
+button.selected {
     color: #00caf2 !important;
 }
 
@@ -57,7 +57,7 @@ button.activated {
     color: #1ef23a !important;
 }
 
-#camera-menu{
+#camera-menu {
     position: absolute;
     right: 5px;
     bottom: 5px;
@@ -69,7 +69,7 @@ button.activated {
     outline: none;
 }
 
-#lock-menu{
+#lock-menu {
     float: right;
     width: 32px;
     font-size: 33px;
@@ -130,18 +130,20 @@ button.activated {
     -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
 }
+
 input.full {
     width: 88%;
     margin: 7px 7px 0 7px;
 }
+
 input.half {
     width: 40%;
     margin: 7px 0px 0 5px;
-    font-size:smaller;
+    font-size: smaller;
 }
+
 .search_in {
     height: 30px;
-
 
     background: linear-gradient(#414A5A, #4C5464);
     background: -webkit-linear-gradient(#414A5A, #4C5464);
@@ -253,34 +255,78 @@ input.half {
     text-overflow: ellipsis;
     white-space: pre;
 }
-td.no-border{
-    border-top:none !important;
+
+td.no-border {
+    border-top: none !important;
 }
-table.colony th:after{
-    content:" : ";
+
+table.colony th:after {
+    content: " : ";
 }
-iframe.hidden-frame{
-    display:none;
+
+iframe.hidden-frame {
+    display: none;
 }
+
 #contentin {
-    padding:0;
+    padding: 0;
 }
-#contentin > iframe{
-    width:100%;
-    height:500px;
+
+#contentin > iframe {
+    width: 100%;
+    height: 500px;
 }
-.middle-center-top{
+
+.middle-center-top {
     position: fixed;
     z-index: 999;
 }
-.big-red{
-    font-size:24px !important;
-    color:#c20900 !important;
+
+.big-red {
+    font-size: 24px !important;
+    color: #c20900 !important;
 }
-.borderless{
-    border:none;
+
+.borderless {
+    border: none;
 }
 
 div > a.zebra {
     background-color: #e2efef;
+}
+
+.overflow-box {
+    overflow: scroll;
+}
+
+.x{
+    height: 250px;
+}
+.xl{
+    height: 330px;
+}
+.xxl{
+    height: 400px;
+}
+.xxxl{
+    height: 500px;
+}
+.xxxxl{
+    height: 600px;
+}
+div.myradio{
+    height:50px;
+
+}
+div.myradio > div{
+    float:left;
+    padding:8px;
+    border: 2px dashed #e6f1d4;
+    margin:2px;
+    border-radius: 3px;
+
+}
+
+.iradio_{
+    /*float:left;*/
 }
