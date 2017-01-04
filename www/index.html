@@ -24,19 +24,25 @@
 
 <script type="text/javascript" src="cordova.js" onload="window._cordova_loaded=1"></script>
 <script>
-    var _url = 'http://192.168.1.233:8000'
-//        var _url = 'http://127.0.0.1:8000'
+    if (window.cordova) {
+        var _url = 'http://192.168.1.251';
+    } else {
+        var _url = 'http://' + location.host;
+    }
+    //        var _url = 'http://127.0.0.1:8000'
     var _root_url = _url + '/static/www/';
     // UNCOMMENT this before production
     //    var _root_url = '';
     jQuery.getScript(window._root_url + '/js/client.js');
+    jQuery.getScript(window._root_url + '/js/chartist.js');
     jQuery.getScript(window._root_url + '/js/views.js');
     $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', window._root_url + '/css/client.css'));
+    $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', window._root_url + '/css/chartist.css'));
     $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', window._root_url + '/css/site.css'));
     function load_from() {
         if (!window._cordova_loaded) {
             // we are in browser
-            onDeviceReady();
+            window.call_device_ready = true;
         }
     }
     setTimeout(load_from, 500);
@@ -57,6 +63,11 @@
         <a href="#" id="open-left"></a>
 
         <h1>Gentan</h1>
+        <div id="systray">
+            <div id="reload" class="glyphicon glyphicon-refresh"></div>
+            <div id="logout" class="glyphicon glyphicon-log-out"></div>
+            <div id="userbox" class="glyphicon glyphicon-user"></div>
+        </div>
     </div>
     <div class="container" id="contentin">
 
@@ -86,4 +97,19 @@
 </div>
 
 </body>
+<script>
+    $(document).ready(function () {
+        if (!window.call_device_ready) {
+            try {
+                onDeviceReady();
+            }
+            catch (e) {
+                console.log(e);
+                if (e.name == 'ReferenceError') {
+                    setTimeout("onDeviceReady()", 1000);
+                }
+            }
+        }
+    });
+</script>
 </html>

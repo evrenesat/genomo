@@ -3,6 +3,39 @@ function wiew(view, params) {
     params = params || [];
     location.hash = view + '/' + params.join('/');
 }
+
+var TEMPLATES = {
+    'admissions': '',
+    'admission': '',
+    'analyse': '',
+    'menu': '',
+    'change_analyse_state': '',
+    'barcode_check': '',
+    'change_selected_analyse_state': '',
+    'dashboard': '',
+};
+
+function create_selectbox(optionList, appendTo, selections, is_multiple) {
+    var combo = $("<select class='comboin'></select>");
+    if (is_multiple) {
+        combo.attr('multiple', 'multiple');
+    }
+    combo.append($("<option value=''> --- </option>"));
+    $.each(optionList, function (i, el) {
+        var option = $("<option>" + el + "</option>");
+        if (selections.indexOf(el) > -1) {
+            option.attr('selected', true);
+        }
+        combo.append(option);
+    });
+    // $(combo).change(function () {
+    //     console.log("Change", toElem);
+    //     toElem.val(is_multiple ? combo.val().join(',') : combo.val());
+    // });
+    if(appendTo){$(appendTo).html(combo)}
+    return combo;
+}
+
 var Client = {
     "portraitMargins": null,
     "landscapeMargins": null,
@@ -197,6 +230,7 @@ var Client = {
     },
     load_templates: function () {
         var self = this;
+        // debugger;
         for (var k of Object.keys(TEMPLATES)) {
             (function (page) {
                 var url = self.root_url + 'tpl/' + page + '.html';
@@ -212,13 +246,53 @@ var Client = {
             VIEWS.ANALYSE_TYPES = result;
         });
     },
+    change_user: function(){
+        var url = window._url + '/lab/api/switch_user/',
+            username = $('div#userbox > select').val();
+
+        $.get(url, {username: username}, function(result){
+            if(result.result == 'success'){
+                alert('Etkin kullanıcı değiştirildi: ' + username);
+            }
+        });
+
+    },
+    LOGIN: false,
+    create_user_menu(){
+        var self = this;
+        var url = window._url + '/lab/api/get_user_info/';
+        $.get(url, function(result){
+            if(result.toString().indexOf('password')>0){
+                Client.show_iframe(window._url);
+                self.LOGIN = false;
+            }else {
+                var combo = create_selectbox(result.other_users, '#userbox', [result.username])
+                combo.on('change', self.change_user);
+                self.LOGIN = true;
+            }
+        });
+    },
+    logout_user(){
+        if(confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+            Client.show_iframe(window._url + '/admin/logout/');
+        }
+    },
     init_app: function () {
+        var self = this;
         $(this).on('menu_template_loaded', this.load_menu_content);
+        $(this).on('dashboard_template_loaded', function(){wiew('dashboard')});
         this.load_templates();
+        this.create_user_menu();
 
-        var self = this;
+        $('div#reload').on('tap', function(){
+            location.reload();
+        });
+        $('div#logout').on('tap', function(){
+            self.logout_user();
+        });
 
-        var self = this;
+
+
         $('#contentin').css('width', window.innerWidth);
 
         // init sidemenu
@@ -265,7 +339,8 @@ var Client = {
                 $('img.small_loading').remove();
                 VIEWS[route.view](route);
             }
-        }).trigger('hashchange');
+        })
+        setTimeout("$(window).trigger('hashchange')",1500);
         ////////////////////////////////////////////////////////////////
 
 
@@ -279,10 +354,8 @@ var Client = {
 
 
 function onDeviceReady() {
-    window.db = window.localStorage;
-
-    $( document ).ajaxError(function() {
-      console.log(parameters)
+    $(document).ajaxError(function () {
+        console.log(arguments)
     });
 
 
@@ -320,4 +393,6 @@ function onDeviceReady() {
 }
 
 document.addEventListener("deviceready", onDeviceReady);
+
+
 

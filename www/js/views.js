@@ -1,15 +1,6 @@
 /**
  * Created by evren on 26/12/16.
  */
-var TEMPLATES = {
-    'admissions': '',
-    'admission': '',
-    'analyse': '',
-    'menu': '',
-    'change_analyse_state': '',
-    'barcode_check': '',
-    'change_selected_analyse_state': '',
-};
 
 VIEWS = {
     ANALYSE_TYPES: null,
@@ -257,6 +248,15 @@ VIEWS = {
 
             Client.fill_modal(TEMPLATES['analyse'](result), result.patient_name);
         });
+    },
+    dashboard:function(){
+        if(!Client.LOGIN)return;
+        Client.render_page('dashboard', {}, 'Anlık Durum');
+        var data = {
+          labels: ['Bananas', 'Apples', 'Grapes'],
+          series: [20, 15, 40]
+        };
+        new Chartist.Pie('#chart1', data);
     },
 
 }

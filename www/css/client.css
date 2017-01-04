@@ -299,34 +299,82 @@ div > a.zebra {
     overflow: scroll;
 }
 
-.x{
+.x {
     height: 250px;
 }
-.xl{
+
+.xl {
     height: 330px;
 }
-.xxl{
+
+.xxl {
     height: 400px;
 }
-.xxxl{
+
+.xxxl {
     height: 500px;
 }
-.xxxxl{
+
+.xxxxl {
     height: 600px;
 }
-div.myradio{
-    height:50px;
+
+div.myradio {
+    height: 50px;
 
 }
-div.myradio > div{
-    float:left;
-    padding:8px;
+
+div.myradio > div {
+    float: left;
+    padding: 8px;
     border: 2px dashed #e6f1d4;
-    margin:2px;
+    margin: 2px;
     border-radius: 3px;
 
 }
 
-.iradio_{
+.iradio_ {
     /*float:left;*/
+}
+
+content > div.ct-chart {
+    float: left;
+    width: 30%;
+    max-width: 400px;
+}
+
+div#systray > div {
+    float: right;
+    padding-left:10px;
+}
+
+div#systray {
+    float: right
+}
+
+div#userbox{
+
+}
+div#userbox > select {
+    font-family: Sans-serif;
+    color: #f6fbfd;
+    height: 40px;
+    border: none;
+    font-size: 22px;
+    background-color: #536ea7;
+    text-transform: capitalize;
+    font-weight: bold;
+    width: 85px;
+}
+
+div#reload {
+    font-size: 27px;
+    padding-top: 7px;
+    padding-right: 8px;
+}
+
+div#logout {
+    font-size: 27px;
+    padding-top: 7px;
+    padding-right: 8px;
 }
