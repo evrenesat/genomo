@@ -64,8 +64,8 @@
 
         <h1>Gentan</h1>
         <div id="systray">
-            <div id="reload" class="glyphicon glyphicon-refresh"></div>
-            <div id="logout" class="glyphicon glyphicon-log-out"></div>
+            <!--<div id="reload" class="glyphicon glyphicon-refresh"></div>-->
+            <!--<div id="logout" class="glyphicon glyphicon-log-out"></div>-->
             <div id="userbox" class="glyphicon glyphicon-user"></div>
         </div>
     </div>
@@ -101,7 +101,8 @@
     $(document).ready(function () {
         if (!window.call_device_ready) {
             try {
-                onDeviceReady();
+                if(!cordova){
+                    onDeviceReady();}
             }
             catch (e) {
                 console.log(e);

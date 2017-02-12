@@ -1,9 +1,17 @@
+var DEBUG = false;
+var DEBUG = 1;
 app.initialize();
-function wiew(view, params) {
+function wiew(view, params, options) {
+    if (options) {
+        if (options.modal == 'close') Client.MODAL.modal('hide');
+    }
     params = params || [];
     location.hash = view + '/' + params.join('/');
 }
-
+jQuery.fn.scrollTo = function (elem) {
+    var b = $(elem);
+    this.scrollTop(b.position().top + b.height() - this.height());
+};
 var TEMPLATES = {
     'admissions': '',
     'admission': '',
@@ -32,7 +40,9 @@ function create_selectbox(optionList, appendTo, selections, is_multiple) {
     //     console.log("Change", toElem);
     //     toElem.val(is_multiple ? combo.val().join(',') : combo.val());
     // });
-    if(appendTo){$(appendTo).html(combo)}
+    if (appendTo) {
+        $(appendTo).html(combo)
+    }
     return combo;
 }
 
@@ -233,7 +243,7 @@ var Client = {
         // debugger;
         for (var k of Object.keys(TEMPLATES)) {
             (function (page) {
-                var url = self.root_url + 'tpl/' + page + '.html';
+                var url = self.root_url + 'tpl/' + page + '.html?_rnd=' + SESS_RAND;
                 $.get(url, function (result) {
                     TEMPLATES[page] = doT.template(result);
                     $(self).trigger(page + '_template_loaded');
@@ -246,51 +256,50 @@ var Client = {
             VIEWS.ANALYSE_TYPES = result;
         });
     },
-    change_user: function(){
+    change_user: function () {
         var url = window._url + '/lab/api/switch_user/',
             username = $('div#userbox > select').val();
-
-        $.get(url, {username: username}, function(result){
-            if(result.result == 'success'){
-                alert('Etkin kullanıcı değiştirildi: ' + username);
-            }
-        });
+        if (username == '_exit_') {
+            Client.logout_user();
+            return;
+        } else if (username) {
+            $.get(url, {username: username}, function (result) {
+                if (result.result == 'success') {
+                    alert('Etkin kullanıcı değiştirildi: ' + username);
+                }
+            });
+        }
 
     },
     LOGIN: false,
     create_user_menu(){
         var self = this;
         var url = window._url + '/lab/api/get_user_info/';
-        $.get(url, function(result){
-            if(result.toString().indexOf('password')>0){
+        $.get(url, function (result) {
+            if (result.toString().indexOf('password') > 0) {
                 Client.show_iframe(window._url);
                 self.LOGIN = false;
-            }else {
+            } else {
                 var combo = create_selectbox(result.other_users, '#userbox', [result.username])
                 combo.on('change', self.change_user);
+                combo.append('<option value="">---</option><option value="_exit_">Çıkış Yap</option>');
                 self.LOGIN = true;
             }
         });
     },
     logout_user(){
-        if(confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
             Client.show_iframe(window._url + '/admin/logout/');
         }
     },
     init_app: function () {
         var self = this;
         $(this).on('menu_template_loaded', this.load_menu_content);
-        $(this).on('dashboard_template_loaded', function(){wiew('dashboard')});
+        $(this).on('dashboard_template_loaded', function () {
+            if(!DEBUG)wiew('dashboard')
+        });
         this.load_templates();
         this.create_user_menu();
-
-        $('div#reload').on('tap', function(){
-            location.reload();
-        });
-        $('div#logout').on('tap', function(){
-            self.logout_user();
-        });
-
 
 
         $('#contentin').css('width', window.innerWidth);
@@ -329,7 +338,7 @@ var Client = {
 
 
         }
-
+        console.log("bind to hashchange");
         $(window).on('hashchange', function () {
             // route dynamic page calls to requested method
             console.log('hashchange event');
@@ -340,20 +349,22 @@ var Client = {
                 VIEWS[route.view](route);
             }
         })
-        setTimeout("$(window).trigger('hashchange')",1500);
+        setTimeout("$(window).trigger('hashchange')", 1500);
         ////////////////////////////////////////////////////////////////
 
 
         ////////////////////////////////////////////////////////////////
 
         // open sidemenu on page load
-        self.snapper.open('left');
+        // self.snapper.open('left');
 
     },
 };
 
 
 function onDeviceReady() {
+
+    window.SESS_RAND = Math.random().toString(36).substring(7);
     $(document).ajaxError(function () {
         console.log(arguments)
     });
@@ -380,13 +391,16 @@ function onDeviceReady() {
     if (window.cordova) {
         Client.go_fullscreen();
         window.plugins.screensize.get(successCallback, successCallback);
-        // Client.scan();
+        Client.scan();
         // Client.root_url = '';
         Client.root_url = window._url + '/static/www/';
     } else {
         Client.root_url = window._url + '/static/www/';
     }
+    if(window.dev_ready_processed)return;
     Client.preload_data();
+
+    window.dev_ready_processed = true;
     Client.init_app();
 
 

@@ -6,12 +6,19 @@
                 <div class="col-md-12">
                     <table class="table colony">
                         <tr>
-                            <th>Kurum</th><td>{{=it.institution}}</td>
-                            <th>Acil</th><td>{{? it.is_urgent}}<div class="big-red glyphicon glyphicon-exclamation-sign"></div>{{??}}-{{?}}</td>
+                            <th>Kurum</th>
+                            <td>{{=it.institution}}</td>
+                            <th>Acil</th>
+                            <td>{{? it.is_urgent}}
+                                <div class="big-red glyphicon glyphicon-exclamation-sign"></div>
+                                {{??}}-{{?}}
+                            </td>
                         </tr>
                         <tr>
-                            <th>Doğum tarihi</th><td>{{=it.birthdate}}</td>
-                            <th>Geliş tarihi</th><td>{{=it.timestamp.split('T')[0]}}</td>
+                            <th>Doğum tarihi</th>
+                            <td>{{=it.birthdate}}</td>
+                            <th>Geliş tarihi</th>
+                            <td>{{=it.timestamp.split('T')[0]}}</td>
                         </tr>
                     </table>
                 </div>
@@ -50,14 +57,49 @@
                 <tr>
                     <td colspan="6" class="no-border">
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-block" onclick="location.hash = 'show_analyse/{{=li.id}}/{{=li.name}}'">Aç</button>
+                            <button type="button" class="btn btn-block"
+                                    onclick="location.hash = 'show_analyse/{{=li.id}}/{{=li.name}}'">
+                                Aç
+                            </button>
                         </div>
                         <div class="col-md-3">
-                            <button type="button" class="btn btn-block" onclick="location.hash = 'set_states_by_hand/{{=li.id}}'">İlerlet</button>
+                            <button type="button" class="btn btn-block"
+                                    onclick="location.hash = 'set_states_by_hand/{{=li.id}}'">
+                                İlerlet
+                            </button>
                         </div>
                         <div class="col-md-3">
-                            <button type="button" class="btn btn-block" onclick="location.hash = 'enter_results/{{=li.id}}/{{=li.name}}'">Sonuç Gir</button>
+                            <button type="button" class="btn btn-block"
+                                    onclick="location.hash = 'enter_results/{{=li.id}}/{{=li.name}}'">
+                                Sonuç Gir
+                            </button>
                         </div>
+                        {{? li.finished}}
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-block"
+                                    onclick="location.hash = 'show_report/{{=li.id}}/{{=li.name}}'">
+                                Rapor
+                            </button>
+                        </div>
+                        {{?}}
+
+                        {{? li.group_relation}}
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-block"
+                                    onclick="wiew('enter_panel_results',['{{=li.group_relation}}','{{=li.name}}'])">
+                                Panel Sonuç Gir
+                            </button>
+                        </div>
+                        {{? li.finished}}
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-block"
+                                    onclick="wiew('show_panel_report',['{{=li.group_relation}}','{{=li.name}}'])">
+                                Panel Rapor
+                            </button>
+                        </div>
+                        {{?}}
+                        {{?}}
+
                     </td>
                 </tr>
                 </tr>

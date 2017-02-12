@@ -38,11 +38,22 @@
 
                 <div>
 
-
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-block"
+                                onclick="wiew('raw_edit', [{{=it.id}}])">
+                            Uygulamada Aç
+                        </button>
+                    </div>
                     <div class="col-md-3">
                         <button type="button" class="btn btn-block"
                                 onclick="wiew('set_states_by_hand', [{{=it.id}}])">
                             İlerlet
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-block"
+                                onclick="wiew('change_analyse_state', [{{=it.type}}], {modal:'close'})">
+                            İlerletme Oturumu Başlat
                         </button>
                     </div>
                     <div class="col-md-3">
@@ -51,42 +62,67 @@
                             Sonuç Gir
                         </button>
                     </div>
+                    {{? it.finished}}
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-block"
+                                onclick="location.hash = 'show_report/{{=it.id}}/{{=it.name}}'">
+                            Rapor
+                        </button>
+                    </div>
+                    {{?}}
+                    {{? it.group_relation}}
+                    <!--{{? it.group_relation == 'GRP'}}-->
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-block"
+                                onclick="wiew('enter_panel_results',['{{=it.group_relation}}','{{=it.name}}'])">
+                            Panel Sonuç Gir
+                        </button>
+                    </div>
+                    {{? it.finished}}
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-block"
+                                onclick="wiew('show_panel_report',['{{=it.group_relation}}','{{=it.name}}'])">
+                            Panel Rapor
+                        </button>
+                    </div>
+                    {{?}}
+                    {{?}}
                 </div>
 
 
             </div>
 
         </div>
-    <div class="panel panel-default">
-        {{? it.states}}
-        <div class="panel-heading">Test Aşamaları</div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Tarih</th>
-                <th>Grup</th>
-                <th>Personel</th>
-                <th>Durum</th>
-                <th>Notlar</th>
-            </tr>
-            </thead>
-            <tbody>
+        <div class="panel panel-default">
+            {{? it.states}}
+            <div class="panel-heading">Test Aşamaları</div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Grup</th>
+                    <th>Personel</th>
+                    <th>Durum</th>
+                    <th>Notlar</th>
+                </tr>
+                </thead>
+                <tbody>
 
-            {{~it.states :li:idx}}
+                {{~it.states :li:idx}}
 
-            <tr {{? it.state_id == li.id}}style="background-color:green;color:#fff"{{?}}>
-                <td>{{=li.timestamp.split('T')[0]}}</td>
-                <td>{{=li.group}}</a></td>
-                <td>{{=li.personnel__user__username}}</td>
-                <td class="overtd1">{{=li.definition__name}}</td>
-                <td class="overtd1">{{=li.comment||''}}</td>
+                <tr {{? it.state_id== li.id}}style="background-color:green;color:#fff" {{?}}>
+                    <td>{{=li.timestamp.split('T')[0]}}</td>
+                    <td>{{=li.group}}</a></td>
+                    <td>{{=li.personnel__user__username}}</td>
+                    <td class="overtd1">{{=li.definition__name}}</td>
+                    <td class="overtd1">{{=li.comment||''}}</td>
 
-            </tr>
+                </tr>
 
-            {{~}}
-            </tbody>
-        </table>
-{{?}}
-    </div>
+                {{~}}
+                </tbody>
+            </table>
+            {{?}}
+        </div>
     </div>
 </content>

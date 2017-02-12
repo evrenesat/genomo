@@ -273,7 +273,8 @@ iframe.hidden-frame {
 }
 
 #contentin > iframe {
-    width: 100%;
+    margin-left:30px;
+    width: 95%;
     height: 500px;
 }
 
@@ -345,16 +346,17 @@ content > div.ct-chart {
 
 div#systray > div {
     float: right;
-    padding-left:10px;
+    padding-left: 10px;
 }
 
 div#systray {
     float: right
 }
 
-div#userbox{
+div#userbox {
 
 }
+
 div#userbox > select {
     font-family: Sans-serif;
     color: #f6fbfd;
@@ -377,4 +379,36 @@ div#logout {
     font-size: 27px;
     padding-top: 7px;
     padding-right: 8px;
+}
+
+div.chart-holder {
+    text-align: center;
+    height: 500px;
+    display: block;
+    float:left;
+    display: none;
+}
+div.chart-holder.shownChart{
+    display:block;
+}
+
+div.chart-holder > div {
+    height:400px;
+    width:100%;
+}
+div.chart-holder > h3 {
+    display: block;
+
+}
+.ct-series-a .ct-slice-pie {
+  /* fill of the pie slieces */
+  fill: hsl(120, 40%, 60%);
+  /* give your pie slices some outline or separate them visually by using the background color here */
+  stroke: white;
+  /* outline width */
+  stroke-width: 4px;
+}
+
+button.btn{
+    margin-bottom:10px;
 }

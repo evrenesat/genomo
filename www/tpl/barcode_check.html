@@ -1,12 +1,8 @@
 <content>
-    {{? (it.analyse && it.analyse2) ||(it.analyse && it.admission)}}
+    {{? (it.analyse && it.analyse2) ||(it.analyse && it.admission) || it.error}}
     <div class="col-md-12">
-        {{? (it.analyse && it.analyse2 && it.analyse.id == it.analyse2.id) || (it.analyse &&
-        it.admission && it.admission.id == it.analyse.admission_id)}}
-        <div class="alert alert-success alert-dismissable">
-            <strong>BAŞARILI!</strong> İşlem başarılı. Test aşaması kaydedildi.
-        </div>
-        {{??}}
+        {{? it.error || (it.analyse && it.analyse2 && (it.analyse.id != it.analyse2.id || it.analyse.group != it.analyse2.group)) ||
+        (it.analyse && it.admission && it.admission.id != it.analyse.admission_id)}}
         <div class="alert alert-danger alert-dismissable">
             <strong>HATA!</strong> Okuttuğunuz barkodlar eşleşmedi.
         </div>

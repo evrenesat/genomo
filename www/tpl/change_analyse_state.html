@@ -3,10 +3,10 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">Test Tipi Seçiniz</div>
-            <div class="list-group overflow-box xxxxl">
+            <div class="list-group overflow-box xxxxl" id="analysetypes">
 
                 {{~it.analyse_types :li:idx}}
-                <a class="list-group-item {{? idx%2}}zebra{{?}} {{? li.id == it.selected_analyse_type_id}}active{{?}}" href="#change_analyse_state/{{=li.id}}" >
+                <a data-oid="{{=li.id}}" class="list-group-item {{? idx%2}}zebra{{?}} {{? li.id == it.selected_analyse_type_id}}active{{?}}" href="#change_analyse_state/{{=li.id}}" >
                     <h4 class="list-group-item-heading">{{=li.name}} {{=li.category__name||''}} </h4>
                 </a>
 
